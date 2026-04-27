@@ -1,7 +1,14 @@
 import json
-import os
 from typing import Any
 from openai import OpenAI
+from langchain_core.output_parsers import PydanticOutputParser
+from doc_generator.models import (
+    InspectFilesOutput,
+    IdentifyContractsOutput,
+    InferRequirementsOutput,
+    ModuleDocOutput,
+    CriticOutput,
+)
 from doc_generator.prompts import (
     INSPECT_FILES_PROMPT,
     IDENTIFY_CONTRACTS_PROMPT,
@@ -21,15 +28,6 @@ def _call_llm(client: OpenAI, model: str, prompt: str) -> str:
     return response.choices[0].message.content.strip()
 
 
-def _parse_json(text: str) -> Any:
-    text = text.strip()
-    if text.startswith("```"):
-        lines = text.split("\n")
-        lines = [l for l in lines if not l.strip().startswith("```")]
-        text = "\n".join(lines)
-    return json.loads(text)
-
-
 def _format_file_contents(files: dict[str, str]) -> str:
     parts = []
     for filename, code in files.items():
@@ -42,14 +40,19 @@ def inspect_files(state: dict) -> dict:
     client = state["client"]
     model = state["model"]
 
+    parser = PydanticOutputParser(pydantic_object=InspectFilesOutput)
     file_list = "\n".join(files.keys())
-    prompt = INSPECT_FILES_PROMPT.format(file_list=file_list)
+    prompt = INSPECT_FILES_PROMPT.format(
+        file_list=file_list,
+        format_instructions=parser.get_format_instructions(),
+    )
     response = _call_llm(client, model, prompt)
 
     try:
-        parsed = _parse_json(response)
-        modules = parsed.get("modules", [])
-    except Exception:
+        parsed = parser.parse(response)
+        modules = parsed.modules
+    except Exception as e:
+        print(f"Warning: inspect_files parse error: {e}")
         modules = []
 
     return {**state, "identified_modules": modules}
@@ -60,15 +63,20 @@ def identify_contracts(state: dict) -> dict:
     client = state["client"]
     model = state["model"]
 
+    parser = PydanticOutputParser(pydantic_object=IdentifyContractsOutput)
     code = _format_file_contents(files)
-    prompt = IDENTIFY_CONTRACTS_PROMPT.format(code=code[:8000])
+    prompt = IDENTIFY_CONTRACTS_PROMPT.format(
+        code=code[:8000],
+        format_instructions=parser.get_format_instructions(),
+    )
     response = _call_llm(client, model, prompt)
 
     try:
-        parsed = _parse_json(response)
-        endpoints = parsed.get("endpoints", [])
-        async_events = parsed.get("async_events", [])
-    except Exception:
+        parsed = parser.parse(response)
+        endpoints = parsed.endpoints
+        async_events = parsed.async_events
+    except Exception as e:
+        print(f"Warning: identify_contracts parse error: {e}")
         endpoints = []
         async_events = []
 
@@ -80,17 +88,22 @@ def infer_requirements(state: dict) -> dict:
     client = state["client"]
     model = state["model"]
 
+    parser = PydanticOutputParser(pydantic_object=InferRequirementsOutput)
     code_summary = _format_file_contents(files)
-    prompt = INFER_REQUIREMENTS_PROMPT.format(code_summary=code_summary[:8000])
+    prompt = INFER_REQUIREMENTS_PROMPT.format(
+        code_summary=code_summary[:8000],
+        format_instructions=parser.get_format_instructions(),
+    )
     response = _call_llm(client, model, prompt)
 
     try:
-        parsed = _parse_json(response)
-        functional = parsed.get("functional_requirements", [])
-        non_functional = parsed.get("non_functional_requirements", [])
-        project_name = parsed.get("project_name", "Unknown Project")
-        project_goal = parsed.get("project_goal", "")
-    except Exception:
+        parsed = parser.parse(response)
+        functional = parsed.functional_requirements
+        non_functional = parsed.non_functional_requirements
+        project_name = parsed.project_name
+        project_goal = parsed.project_goal
+    except Exception as e:
+        print(f"Warning: infer_requirements parse error: {e}")
         functional = []
         non_functional = []
         project_name = "Unknown Project"
@@ -111,26 +124,29 @@ def generate_module_docs(state: dict) -> dict:
     model = state["model"]
     identified_modules = state.get("identified_modules", [])
 
+    parser = PydanticOutputParser(pydantic_object=ModuleDocOutput)
     module_docs = []
+
     for module in identified_modules:
-        module_name = module.get("name", "Unknown")
-        module_files = module.get("files", [])
-        code_parts = {}
-        for fname in module_files:
-            if fname in files:
-                code_parts[fname] = files[fname]
-        if not code_parts:
-            code_parts = files
+        module_name = module.get("name", "Unknown") if isinstance(module, dict) else str(module)
+        module_files = module.get("files", []) if isinstance(module, dict) else []
+        code_parts = {f: files[f] for f in module_files if f in files} or files
 
         code = _format_file_contents(code_parts)
-        prompt = MODULE_DOC_PROMPT.format(module_name=module_name, code=code[:6000])
+        prompt = MODULE_DOC_PROMPT.format(
+            module_name=module_name,
+            code=code[:6000],
+            format_instructions=parser.get_format_instructions(),
+        )
         response = _call_llm(client, model, prompt)
 
         try:
-            parsed = _parse_json(response)
-            parsed["name"] = module_name
-            module_docs.append(parsed)
-        except Exception:
+            parsed = parser.parse(response)
+            doc = parsed.model_dump()
+            doc["name"] = module_name
+            module_docs.append(doc)
+        except Exception as e:
+            print(f"Warning: generate_module_docs parse error for {module_name}: {e}")
             module_docs.append({"name": module_name, "purpose": "Could not parse documentation."})
 
     return {**state, "module_docs": module_docs}
@@ -140,6 +156,7 @@ def run_critic(state: dict) -> dict:
     client = state["client"]
     model = state["model"]
 
+    parser = PydanticOutputParser(pydantic_object=CriticOutput)
     docs_summary = json.dumps({
         "project_name": state.get("project_name"),
         "project_goal": state.get("project_goal"),
@@ -148,14 +165,18 @@ def run_critic(state: dict) -> dict:
         "endpoints": state.get("endpoints"),
     }, indent=2)
 
-    prompt = CRITIC_PROMPT.format(docs=docs_summary[:8000])
+    prompt = CRITIC_PROMPT.format(
+        docs=docs_summary[:8000],
+        format_instructions=parser.get_format_instructions(),
+    )
     response = _call_llm(client, model, prompt)
 
     try:
-        parsed = _parse_json(response)
-        score = parsed.get("score", 5)
-        problems = parsed.get("problems", [])
-    except Exception:
+        parsed = parser.parse(response)
+        score = parsed.score
+        problems = parsed.problems
+    except Exception as e:
+        print(f"Warning: run_critic parse error: {e}")
         score = 5
         problems = ["Could not parse critic response."]
 
@@ -184,16 +205,17 @@ def fix_docs(state: dict) -> dict:
     response = _call_llm(client, model, prompt)
 
     try:
-        parsed = _parse_json(response)
+        fixed = json.loads(response)
         return {
             **state,
-            "project_name": parsed.get("project_name", state.get("project_name")),
-            "project_goal": parsed.get("project_goal", state.get("project_goal")),
-            "functional_requirements": parsed.get("functional_requirements", state.get("functional_requirements")),
-            "non_functional_requirements": parsed.get("non_functional_requirements", state.get("non_functional_requirements")),
-            "module_docs": parsed.get("modules", state.get("module_docs")),
-            "endpoints": parsed.get("endpoints", state.get("endpoints")),
-            "async_events": parsed.get("async_events", state.get("async_events")),
+            "project_name": fixed.get("project_name", state.get("project_name")),
+            "project_goal": fixed.get("project_goal", state.get("project_goal")),
+            "functional_requirements": fixed.get("functional_requirements", state.get("functional_requirements")),
+            "non_functional_requirements": fixed.get("non_functional_requirements", state.get("non_functional_requirements")),
+            "module_docs": fixed.get("modules", state.get("module_docs")),
+            "endpoints": fixed.get("endpoints", state.get("endpoints")),
+            "async_events": fixed.get("async_events", state.get("async_events")),
         }
-    except Exception:
+    except Exception as e:
+        print(f"Warning: fix_docs parse error: {e}")
         return state

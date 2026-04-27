@@ -5,8 +5,7 @@ For each module, provide:
 - files: list of filenames that belong to it
 - purpose: one sentence describing what it does
 
-Respond with valid JSON only. Example:
-{{"modules": [{{"name": "AuthModule", "files": ["auth.py"], "purpose": "Handles authentication"}}]}}
+{format_instructions}
 
 Files:
 {file_list}
@@ -17,8 +16,7 @@ Given the following code, extract:
 - REST API endpoints (path, method, description, request_body, response, auth_required)
 - Async events (event name and description)
 
-Respond with valid JSON only. Example:
-{{"endpoints": [{{"path": "/login", "method": "POST", "description": "Login", "request_body": "email, password", "response": "token", "auth_required": false}}], "async_events": ["user.connected: fired when user joins"]}}
+{format_instructions}
 
 Code:
 {code}
@@ -31,7 +29,7 @@ Given the following Python codebase, infer:
 - project_name: short name for this project
 - project_goal: one sentence summary of the project purpose
 
-Respond with valid JSON only.
+{format_instructions}
 
 Code summary:
 {code_summary}
@@ -47,20 +45,19 @@ Given the following code for the module '{module_name}', write documentation inc
 - key_functions: important function names
 - notes: any important implementation details
 
-Respond with valid JSON only.
+{format_instructions}
 
 Code:
 {code}
 """
 
 CRITIC_PROMPT = """You are reviewing auto-generated software documentation for quality.
-Rate the documentation on a scale of 0-10 and list specific problems.
+Rate the documentation on a scale of 0-10 and list specific problems found.
+
+{format_instructions}
 
 Documentation:
 {docs}
-
-Respond with valid JSON only:
-{{"score": 7, "problems": ["problem 1", "problem 2"]}}
 """
 
 FIX_DOCS_PROMPT = """You are improving software documentation based on reviewer feedback.
