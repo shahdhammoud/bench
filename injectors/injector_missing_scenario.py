@@ -31,6 +31,8 @@ def get_function_source(source: str, lineno_start: int, lineno_end: int) -> str:
     return "\n".join(lines[lineno_start - 1 : lineno_end])
 
 def ask_llm(function_source: str) -> str:
+    from openai import OpenAI
+    client = OpenAI(base_url="http://d.dgx:54000/v1", api_key="sk-litellm-token-hyper")
     prompt = f"""You are a code mutation tool. Your job is to inject a subtle bug into a test function.
 
 Given the following Python test function, remove one important precondition or setup step.
@@ -46,7 +48,7 @@ Function:
 {function_source}
 """
     response = client.chat.completions.create(
-        model=MODEL,
+        model="gpt-oss-120b",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.7,
     )
@@ -65,8 +67,7 @@ def self_consistency(function_source: str, n: int = 3) -> str:
         cleaned = clean_code(raw)
         responses.append(cleaned)
     counter = Counter(responses)
-    best = counter.most_common(1)[0][0]
-    return best
+    return counter.most_common(1)[0][0]
 
 def replace_function_in_source(source: str, lineno_start: int, lineno_end: int, new_func: str) -> str:
     lines = source.splitlines()
@@ -88,7 +89,7 @@ def inject(file_path: str) -> dict:
     new_source = replace_function_in_source(source, start, end, new_func)
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(new_source)
-    record = {
+    return {
         "injector": "injector_missing_scenario",
         "problem_type": 12,
         "problem_type_name": "Missing scenario / preconditions",
@@ -99,13 +100,11 @@ def inject(file_path: str) -> dict:
         "original": original_func,
         "injected": new_func,
     }
-    return record
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python injector_missing_scenario.py <path_to_test_file>")
         sys.exit(1)
-    target = sys.argv[1]
-    result = inject(target)
+    result = inject(sys.argv[1])
     print("\n── Injection Record ──")
     print(json.dumps(result, indent=2))
