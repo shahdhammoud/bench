@@ -28,6 +28,27 @@ INJECTOR_FILES = [
 
 INJECTIONS_PER_TASK = [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]
 
+# These injectors only work on test files
+TEST_ONLY_INJECTORS = {
+    'injector_wrong_test_expectations.py',
+    'injector_missing_functionality_tests.py',
+    'injector_missing_scenario.py',
+}
+
+# This injector moves the file so needs special handling
+DESTRUCTIVE_INJECTORS = {
+    'injector_project_structure.py',
+}
+
+
+def find_test_file(target_rel, repo_dir):
+    """Find the test file corresponding to a source file."""
+    basename = pathlib.Path(target_rel).stem
+    matches = list(repo_dir.rglob(f'test_{basename}.py'))
+    if matches:
+        return matches[0]
+    return None
+
 
 def call_injector(injector_file, target_abs, target_rel):
     mod = load_injector(injector_file)
@@ -174,26 +195,42 @@ def main():
             target_rel = patched_files[inj_i % len(patched_files)]
             target_abs = str(REPO_DIR / target_rel)
 
-            print(f"  Injection {inj_i+1}/{n_injections}: {injector_file} on {target_rel}")
+            # Test-only injectors: find the test file instead
+            actual_rel = target_rel
+            actual_abs = target_abs
+            if injector_file in TEST_ONLY_INJECTORS:
+                test_file = find_test_file(target_rel, REPO_DIR)
+                if test_file is None:
+                    print(f"  Injection {inj_i+1}/{n_injections}: {injector_file} -- no test file found, skipping")
+                    continue
+                actual_abs = str(test_file)
+                actual_rel = str(test_file.relative_to(REPO_DIR))
+
+            # Skip destructive injectors in assembly
+            if injector_file in DESTRUCTIVE_INJECTORS:
+                print(f"  Injection {inj_i+1}/{n_injections}: {injector_file} -- skipped (destructive)")
+                continue
+
+            print(f"  Injection {inj_i+1}/{n_injections}: {injector_file} on {actual_rel}")
 
             try:
-                gold_code = Path(target_abs).read_text()
+                gold_code = Path(actual_abs).read_text()
             except Exception as e:
                 print(f"    ERROR reading file: {e}, skipping")
                 continue
 
             try:
-                record = call_injector(injector_file, target_abs, target_rel)
+                record = call_injector(injector_file, actual_abs, actual_rel)
             except Exception as e:
                 print(f"    ERROR running injector: {e}, skipping")
-                restore_file(target_rel, REPO_DIR)
+                restore_file(actual_rel, REPO_DIR)
                 continue
 
             try:
-                buggy_code = Path(target_abs).read_text()
+                buggy_code = Path(actual_abs).read_text()
             except Exception as e:
                 print(f"    ERROR reading injected file: {e}, skipping")
-                restore_file(target_rel, REPO_DIR)
+                restore_file(actual_rel, REPO_DIR)
                 continue
 
             entry = {
@@ -207,7 +244,7 @@ def main():
             benchmark.append(entry)
             print(f"    Saved entry #{len(benchmark)}")
 
-            restore_file(target_rel, REPO_DIR)
+            restore_file(actual_rel, REPO_DIR)
 
         run_command("git checkout HEAD -- .", cwd=REPO_DIR)
 
