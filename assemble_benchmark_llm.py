@@ -11,22 +11,19 @@ REPO_DIR = BENCH_DIR / "data" / "repos" / "astropy"
 INJECTORS_DIR = BENCH_DIR / "injectors"
 OUTPUT_FILE = BENCH_DIR / "data" / "benchmark.json"
 
-RULE_BASED_INJECTORS = [
-    "injector_broad_exception.py",
-    "injector_wrong_field_access.py",
-    "injector_interface_mismatch.py",
-    "injector_test_duplication.py",
-    "injector_forbidden_mocking.py",
-    "injector_field_mapping.py",
+LLM_INJECTORS = [
+    "injector_fake_data.py",
+    "injector_wrong_test_expectations.py",
+    "injector_missing_functionality_tests.py",
+    "injector_missing_scenario.py",
+    "injector_architecture_reuse.py",
+    "injector_data_model.py",
 ]
 
 TEST_ONLY_INJECTORS = {
-    'injector_test_duplication.py',
-    'injector_forbidden_mocking.py',
-}
-
-DESTRUCTIVE_INJECTORS = {
-    'injector_project_structure.py',
+    'injector_wrong_test_expectations.py',
+    'injector_missing_functionality_tests.py',
+    'injector_missing_scenario.py',
 }
 
 
@@ -42,41 +39,6 @@ def call_injector(injector_file, target_abs, target_rel):
     mod = load_injector(injector_file)
     if hasattr(mod, 'inject'):
         return mod.inject(target_abs)
-    if hasattr(mod, 'inject_into_file'):
-        return mod.inject_into_file(target_abs)
-    source = pathlib.Path(target_abs).read_text()
-    if hasattr(mod, 'inject_broad_exception'):
-        new_source, records = mod.inject_broad_exception(source)
-        if not records:
-            raise ValueError("No broad exceptions found")
-        pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
-    if hasattr(mod, 'inject_wrong_field_access'):
-        new_source, records = mod.inject_wrong_field_access(source)
-        if not records:
-            raise ValueError("No field access found")
-        pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
-    if hasattr(mod, 'inject_interface_mismatch'):
-        new_source, records = mod.inject_interface_mismatch(source)
-        if not records:
-            raise ValueError("No interface mismatch found")
-        pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
-    if hasattr(mod, 'inject_field_mapping'):
-        new_source, records = mod.inject_field_mapping(source)
-        if not records:
-            raise ValueError("No field mapping found")
-        pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
-    if hasattr(mod, 'inject_forbidden_mocking'):
-        new_source, records = mod.inject_forbidden_mocking(source)
-        if not records:
-            raise ValueError("No injectable functions found")
-        pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
-    if hasattr(mod, 'inject_test_duplication'):
-        return mod.inject_test_duplication(str(REPO_DIR), target_rel)
     raise ValueError(f"No known inject function in {injector_file}")
 
 
@@ -129,10 +91,17 @@ def checkout_commit(commit, repo_dir):
 
 
 def main():
+    # Load existing entries
+    if OUTPUT_FILE.exists():
+        with open(OUTPUT_FILE) as f:
+            benchmark = json.load(f)
+        print(f"Loaded {len(benchmark)} existing entries")
+    else:
+        benchmark = []
+        print("No existing benchmark file, starting fresh")
+
     tasks = sorted(TASKS_DIR.glob("*.json"))
     print(f"Found {len(tasks)} tasks")
-
-    benchmark = []
 
     for task_idx, task_file in enumerate(tasks):
         with open(task_file) as f:
@@ -162,7 +131,7 @@ def main():
             continue
         print(f"  Patched files: {patched_files}")
 
-        for injector_file in RULE_BASED_INJECTORS:
+        for injector_file in LLM_INJECTORS:
 
             if injector_file in TEST_ONLY_INJECTORS:
                 target_rel = None
@@ -181,6 +150,14 @@ def main():
                 target_rel = patched_files[0]
 
             target_abs = str(REPO_DIR / target_rel)
+
+            # Skip large files for architecture_reuse (causes LLM timeout)
+            if injector_file == 'injector_architecture_reuse.py':
+                file_size = pathlib.Path(target_abs).stat().st_size
+                if file_size > 50000:
+                    print(f"  {injector_file} -- file too large ({file_size} bytes), skipping")
+                    continue
+
             print(f"  {injector_file} on {target_rel}")
 
             try:
@@ -220,11 +197,12 @@ def main():
             print(f"    Saved entry #{len(benchmark)}")
             restore_file(target_rel, REPO_DIR)
 
-        run_command("git checkout HEAD -- .", cwd=REPO_DIR)
+        # Save after every task so progress is not lost if interrupted
+        with open(OUTPUT_FILE, "w") as f:
+            json.dump(benchmark, f, indent=2)
+        print(f"  Progress saved ({len(benchmark)} total entries so far)")
 
-    OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUTPUT_FILE, "w") as f:
-        json.dump(benchmark, f, indent=2)
+        run_command("git checkout HEAD -- .", cwd=REPO_DIR)
 
     print(f"\n=== DONE ===")
     print(f"Total entries: {len(benchmark)}")
