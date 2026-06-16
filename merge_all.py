@@ -5,7 +5,7 @@ import importlib.util
 from collections import defaultdict
 from pathlib import Path
 
-BENCH_DIR = Path('/home/shahd-hl/bench')
+BENCH_DIR = Path(__file__).resolve().parent
 TASKS_DIR = BENCH_DIR / 'data' / 'swe_tasks'
 INJECTORS_DIR = BENCH_DIR / 'injectors'
 OUTPUT_FILE = BENCH_DIR / 'data' / 'benchmark_final.json'

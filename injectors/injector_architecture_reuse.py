@@ -4,10 +4,15 @@ import sys
 import re
 from openai import OpenAI
 from collections import Counter
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).resolve().parent.parent / '.env')
+
 
 client = OpenAI(
-    base_url="http://10.32.2.11:54000/v1",
-    api_key="sk-litellm-token-hyper",
+    base_url=os.getenv('LLM_BASE_URL'),
+    api_key=os.getenv('LLM_API_KEY'),
 )
 MODEL = "gpt-oss-120b"
 

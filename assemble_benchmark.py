@@ -5,7 +5,7 @@ import importlib.util
 from pathlib import Path
 from collections import Counter
 
-BENCH_DIR = Path("/home/shahd-hl/bench")
+BENCH_DIR = Path(__file__).resolve().parent
 TASKS_DIR = BENCH_DIR / "data" / "swe_tasks"
 REPO_DIR = BENCH_DIR / "data" / "repos" / "astropy"
 INJECTORS_DIR = BENCH_DIR / "injectors"

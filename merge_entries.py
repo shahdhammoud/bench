@@ -5,7 +5,7 @@ import importlib.util
 from collections import defaultdict
 from pathlib import Path
 
-BENCH_DIR = Path('/home/shahd-hl/bench')
+BENCH_DIR = Path(__file__).resolve().parent
 REPO_DIR = BENCH_DIR / 'data' / 'repos' / 'astropy'
 INJECTORS_DIR = BENCH_DIR / 'injectors'
 INPUT_FILE = BENCH_DIR / 'data' / 'benchmark.json'

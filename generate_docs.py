@@ -2,19 +2,22 @@ import json
 import sys
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
-sys.path.insert(0, '/home/shahd-hl/bench')
-os.environ['GPT_OSS_HOST'] = 'http://10.32.2.11:54000/v1'
-os.environ['GPT_OSS_KEY'] = 'sk-litellm-token-hyper'
+BENCH_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BENCH_DIR))
+load_dotenv(BENCH_DIR / '.env')
+
+os.environ['GPT_OSS_HOST'] = os.getenv('LLM_BASE_URL', '')
+os.environ['GPT_OSS_KEY'] = os.getenv('LLM_API_KEY', '')
 os.environ['GPT_OSS_MODEL_NAME'] = 'gpt-oss-120b'
 
 from openai import OpenAI
 from doc_generator.workflow import run_workflow
 
-BENCHMARK_FILE = Path('/home/shahd-hl/bench/data/benchmark.json')
-client = OpenAI(base_url='http://10.32.2.11:54000/v1', api_key='sk-litellm-token-hyper')
+BENCHMARK_FILE = BENCH_DIR / 'data' / 'benchmark.json'
+client = OpenAI(base_url=os.getenv('LLM_BASE_URL'), api_key=os.getenv('LLM_API_KEY'))
 MODEL = 'gpt-oss-120b'
-
 
 def extract_doc(result):
     return {
@@ -27,23 +30,17 @@ def extract_doc(result):
         'critic_problems': result.get('critic_problems'),
     }
 
-
 def main():
     entries = json.load(open(BENCHMARK_FILE))
     print(f'Total entries: {len(entries)}')
-
     already_done = sum(1 for e in entries if e.get('documentation'))
     print(f'Already have docs: {already_done}')
-
     for i, e in enumerate(entries):
         if e.get('documentation'):
             print(f'Entry {i+1}/{len(entries)} — already has docs, skipping')
             continue
-
         print(f'\nEntry {i+1}/{len(entries)} — {e["instance_id"]} — {e["target_file"]}')
-
         files = {e['target_file']: e['gold_code']}
-
         try:
             result = run_workflow(files, client, MODEL)
             e['documentation'] = extract_doc(result)
@@ -51,14 +48,10 @@ def main():
         except Exception as ex:
             print(f'  ERROR: {ex}')
             e['documentation'] = None
-
-        # Save after every entry
         with open(BENCHMARK_FILE, 'w') as f:
             json.dump(entries, f, indent=2)
-
     done = sum(1 for e in entries if e.get('documentation'))
     print(f'\nDone. {done}/{len(entries)} entries have documentation.')
-
 
 if __name__ == '__main__':
     main()
