@@ -1,5 +1,7 @@
 from typing import Any, TypedDict
 from langgraph.graph import StateGraph, END
+MAX_FIX_ITERATIONS = 3  # increase if critic scores remain low
+
 from doc_generator.nodes import (
     inspect_files,
     identify_contracts,
@@ -24,10 +26,11 @@ class DocGenState(TypedDict):
     module_docs: list
     critic_score: float
     critic_problems: list
+    fix_iteration: int
 
 
 def should_fix(state: DocGenState) -> str:
-    if state.get("critic_score", 10) < 7:
+    if state.get("critic_score", 10) < 7 and state.get("fix_iteration", 0) < MAX_FIX_ITERATIONS:
         return "fix_docs"
     return END
 
@@ -48,7 +51,7 @@ def build_graph() -> StateGraph:
     graph.add_edge("infer_requirements", "generate_module_docs")
     graph.add_edge("generate_module_docs", "run_critic")
     graph.add_conditional_edges("run_critic", should_fix)
-    graph.add_edge("fix_docs", END)
+    graph.add_edge("fix_docs", "run_critic")
 
     return graph.compile()
 
@@ -69,6 +72,7 @@ def run_workflow(files: dict[str, str], client: Any, model: str) -> DocGenState:
         module_docs=[],
         critic_score=10.0,
         critic_problems=[],
+        fix_iteration=0,
     )
     result = graph.invoke(initial_state)
     return result

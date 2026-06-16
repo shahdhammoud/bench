@@ -8,6 +8,7 @@ from doc_generator.models import (
     InferRequirementsOutput,
     ModuleDocOutput,
     CriticOutput,
+    GeneratedDocs,
 )
 from doc_generator.prompts import (
     INSPECT_FILES_PROMPT,
@@ -188,6 +189,7 @@ def fix_docs(state: dict) -> dict:
     model = state["model"]
     problems = state.get("critic_problems", [])
 
+    parser = PydanticOutputParser(pydantic_object=GeneratedDocs)
     docs_summary = json.dumps({
         "project_name": state.get("project_name"),
         "project_goal": state.get("project_goal"),
@@ -201,21 +203,23 @@ def fix_docs(state: dict) -> dict:
     prompt = FIX_DOCS_PROMPT.format(
         problems="\n".join(f"- {p}" for p in problems),
         docs=docs_summary[:8000],
+        format_instructions=parser.get_format_instructions(),
     )
     response = _call_llm(client, model, prompt)
 
     try:
-        fixed = json.loads(response)
+        fixed = parser.parse(response)
         return {
             **state,
-            "project_name": fixed.get("project_name", state.get("project_name")),
-            "project_goal": fixed.get("project_goal", state.get("project_goal")),
-            "functional_requirements": fixed.get("functional_requirements", state.get("functional_requirements")),
-            "non_functional_requirements": fixed.get("non_functional_requirements", state.get("non_functional_requirements")),
-            "module_docs": fixed.get("modules", state.get("module_docs")),
-            "endpoints": fixed.get("endpoints", state.get("endpoints")),
-            "async_events": fixed.get("async_events", state.get("async_events")),
+            "project_name": fixed.project_name,
+            "project_goal": fixed.project_goal,
+            "functional_requirements": fixed.functional_requirements,
+            "non_functional_requirements": fixed.non_functional_requirements,
+            "module_docs": [m.model_dump() for m in fixed.modules],
+            "endpoints": [e.model_dump() for e in fixed.api_endpoints],
+            "async_events": fixed.async_events,
+            "fix_iteration": state.get("fix_iteration", 0) + 1,
         }
     except Exception as e:
         print(f"Warning: fix_docs parse error: {e}")
-        return state
+        return {**state, "fix_iteration": state.get("fix_iteration", 0) + 1}

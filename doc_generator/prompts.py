@@ -67,5 +67,5 @@ Fix the following problems in the documentation:
 Current documentation:
 {docs}
 
-Respond with the corrected documentation as valid JSON in the same format as the input.
+{format_instructions}
 """
