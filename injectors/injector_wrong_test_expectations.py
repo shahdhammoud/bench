@@ -83,9 +83,17 @@ def self_consistency(function_source: str, n: int = 3) -> str:
         cleaned = clean_code(raw)
         responses.append(cleaned)
 
-    counter = Counter(responses)
-    best = counter.most_common(1)[0][0]
-    return best
+    # Vote on extracted return statements, not full strings (exact string match on full LLM output is unreliable)
+    def extract_returns(code):
+        return tuple(l.strip() for l in code.splitlines() if l.strip().startswith('return '))
+    keys = [extract_returns(r) for r in responses]
+    counter = Counter(keys)
+    best_key = counter.most_common(1)[0][0]
+    # Return the first full response that matches the winning return pattern
+    for r, k in zip(responses, keys):
+        if k == best_key:
+            return r
+    return responses[0]
 
 
 def replace_function_in_source(source: str, lineno_start: int, lineno_end: int, new_func: str) -> str:

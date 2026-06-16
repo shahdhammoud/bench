@@ -69,8 +69,17 @@ def self_consistency(source: str, module: str, name: str, n: int = 3) -> str:
         raw = ask_llm(source, module, name)
         cleaned = clean_code(raw)
         responses.append(cleaned)
-    counter = Counter(responses)
-    return counter.most_common(1)[0][0]
+    # Vote on extracted return statements, not full strings (exact string match on full LLM output is unreliable)
+    def extract_returns(code):
+        return tuple(l.strip() for l in code.splitlines() if l.strip().startswith('return '))
+    keys = [extract_returns(r) for r in responses]
+    counter = Counter(keys)
+    best_key = counter.most_common(1)[0][0]
+    # Return the first full response that matches the winning return pattern
+    for r, k in zip(responses, keys):
+        if k == best_key:
+            return r
+    return responses[0]
 
 def inject(file_path: str) -> dict:
     with open(file_path, "r", encoding="utf-8") as f:
