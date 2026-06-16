@@ -51,31 +51,31 @@ def call_injector(injector_file, target_abs, target_rel, repo_dir):
         if not records:
             raise ValueError('No broad exceptions found')
         pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
+        return {'injected': True, 'modified_code': new_source, 'injections': records, 'problem_type': records[0]['problem_type'], 'problem_name': records[0].get('problem_name', '')}
     if hasattr(mod, 'inject_wrong_field_access'):
         new_source, records = mod.inject_wrong_field_access(source)
         if not records:
             raise ValueError('No field access found')
         pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
+        return {'injected': True, 'modified_code': new_source, 'injections': records, 'problem_type': records[0]['problem_type'], 'problem_name': records[0].get('problem_name', '')}
     if hasattr(mod, 'inject_interface_mismatch'):
         new_source, records = mod.inject_interface_mismatch(source)
         if not records:
             raise ValueError('No interface mismatch found')
         pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
+        return {'injected': True, 'modified_code': new_source, 'injections': records, 'problem_type': records[0]['problem_type'], 'problem_name': records[0].get('problem_name', '')}
     if hasattr(mod, 'inject_field_mapping'):
         new_source, records = mod.inject_field_mapping(source)
         if not records:
             raise ValueError('No field mapping found')
         pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
+        return {'injected': True, 'modified_code': new_source, 'injections': records, 'problem_type': records[0]['problem_type'], 'problem_name': records[0].get('problem_name', '')}
     if hasattr(mod, 'inject_forbidden_mocking'):
         new_source, records = mod.inject_forbidden_mocking(source)
         if not records:
             raise ValueError('No injectable functions found')
         pathlib.Path(target_abs).write_text(new_source)
-        return records[0]
+        return {'injected': True, 'modified_code': new_source, 'injections': records, 'problem_type': records[0]['problem_type'], 'problem_name': records[0].get('problem_name', '')}
     if hasattr(mod, 'inject_test_duplication'):
         return mod.inject_test_duplication(str(repo_dir), target_rel)
     raise ValueError(f'No known inject function in {injector_file}')
