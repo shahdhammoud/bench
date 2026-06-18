@@ -199,10 +199,12 @@ def fix_docs(state: dict) -> dict:
         "endpoints": state.get("endpoints"),
         "async_events": state.get("async_events"),
     }, indent=2)
+    source_code = "\n".join(f"{fname}:\n{code}" for fname, code in state.get("files", {}).items())
 
     prompt = FIX_DOCS_PROMPT.format(
         problems="\n".join(f"- {p}" for p in problems),
-        docs=docs_summary[:8000],
+        docs=docs_summary[:6000],
+        source_code=source_code[:4000],
         format_instructions=parser.get_format_instructions(),
     )
     response = _call_llm(client, model, prompt)

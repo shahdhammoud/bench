@@ -1,6 +1,6 @@
 from typing import Any, TypedDict
 from langgraph.graph import StateGraph, END
-MAX_FIX_ITERATIONS = 3  # increase if critic scores remain low
+MAX_FIX_ITERATIONS = 5  # increase if critic scores remain low
 
 from doc_generator.nodes import (
     inspect_files,
@@ -30,7 +30,7 @@ class DocGenState(TypedDict):
 
 
 def should_fix(state: DocGenState) -> str:
-    if state.get("critic_score", 10) < 7 and state.get("fix_iteration", 0) < MAX_FIX_ITERATIONS:
+    if state.get("critic_score", 10) < 6.5 and state.get("fix_iteration", 0) < MAX_FIX_ITERATIONS:
         return "fix_docs"
     return END
 

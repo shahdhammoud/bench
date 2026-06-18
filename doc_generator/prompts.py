@@ -67,10 +67,12 @@ Documentation:
 """
 
 FIX_DOCS_PROMPT = """You are improving auto-generated documentation for a single Python source file.
-Fix only the specific problems listed below. Do NOT add information that is not present in the source code.
+Fix only the specific problems listed below. Base all fixes strictly on the source code provided.
 Problems to fix:
 {problems}
 Current documentation:
 {docs}
+Source code:
+{source_code}
 {format_instructions}
 """
