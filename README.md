@@ -124,18 +124,6 @@ Entries where `injected == false` (injector found nothing to change) are skipped
   "critic_score": 7.5
 }
 ```
-
-## Quality Gates
-
-- Entries scoring below **6.5** on the critic are removed
-- Entries where gold code and buggy code are identical are removed
-- All entries verified: zero identical gold/buggy pairs
-
-## Known Gaps
-
-- **Type 1** (project structure / destructive file-move) is not included due to pipeline safety concerns — moving files during automated assembly risks corrupting the working repository state.
-- Documentation is generated as **structured JSON** rather than the multi-file format (specs.md, openapi_spec.yaml, etc.) described in the original project plan.
-
 ## Environment
 
 - Python: `openhands-ai-py3.12`
@@ -145,4 +133,4 @@ Entries where `injected == false` (injector found nothing to change) are skipped
 ## Author
 
 Shahd Hammoud — research internship, ITMO University  
-Supervisor: Professor Maria
+Supervisor: Maria Khodorchenko
