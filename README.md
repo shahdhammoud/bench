@@ -30,19 +30,18 @@ Derived from human reviewer traces across modules M2, M4, M5, M7:
 
 | # | Problem Type | Injector | In Benchmark |
 |---|--------------|----------|--------------|
-| 1 | Project structure problems | Rule-based | ❌ (skipped — pipeline safety) |
-| 2 | Architecture / model reuse | LLM-based | ✅ |
-| 3 | Interface / signature mismatches | Rule-based | ✅ |
-| 4 | Data model implementation | LLM-based | ✅ |
-| 5 | Field mapping / conversion mistakes | Rule-based | ✅ |
-| 6 | Wrong field access | Rule-based | ✅ |
-| 7 | Broad exception handling | Rule-based | ✅ |
-| 8 | Fake data in implementation | LLM-based | ✅ |
-| 9 | Test duplication | Rule-based | ✅ |
-| 10 | Forbidden mocking in tests | Rule-based | ✅ |
-| 11 | Missing real functionality tests | LLM-based | ✅ |
-| 12 | Missing scenario / preconditions | LLM-based | ✅ |
-| 13 | Wrong test expectations | LLM-based | ✅ |
+| 1 | Architecture / model reuse | LLM-based | ✅ |
+| 2 | Interface / signature mismatches | Rule-based | ✅ |
+| 3 | Data model implementation | LLM-based | ✅ |
+| 4 | Field mapping / conversion mistakes | Rule-based | ✅ |
+| 5 | Wrong field access | Rule-based | ✅ |
+| 6 | Broad exception handling | Rule-based | ✅ |
+| 7 | Fake data in implementation | LLM-based | ✅ |
+| 8 | Test duplication | Rule-based | ✅ |
+| 9 | Forbidden mocking in tests | Rule-based | ✅ |
+| 10 | Missing real functionality tests | LLM-based | ✅ |
+| 11 | Missing scenario / preconditions | LLM-based | ✅ |
+| 12 | Wrong test expectations | LLM-based | ✅ |
 
 ## Repository Structure
 
