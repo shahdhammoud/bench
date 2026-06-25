@@ -1,0 +1,716 @@
+{
+  "overall_accuracy": 0.4639175257731959,
+  "correct": 45,
+  "total": 97,
+  "per_type": {
+    "7": {
+      "correct": 5,
+      "total": 32
+    },
+    "10": {
+      "correct": 21,
+      "total": 23
+    },
+    "8": {
+      "correct": 17,
+      "total": 22
+    },
+    "9": {
+      "correct": 0,
+      "total": 12
+    },
+    "3": {
+      "correct": 1,
+      "total": 2
+    },
+    "2": {
+      "correct": 0,
+      "total": 1
+    },
+    "6": {
+      "correct": 1,
+      "total": 5
+    }
+  },
+  "entries": [
+    {
+      "entry_index": 0,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The is_separable function returns hardcoded fake values instead of computing the separability based on the input transform."
+    },
+    {
+      "entry_index": 1,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The real business logic component 'assert_allclose' is mocked with unittest.mock.patch in the test function 'test_coord_matrix'."
+    },
+    {
+      "entry_index": 2,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The 'test_to_table_bad_index' method mocks 'astropy.cosmology.Cosmology' with unittest.mock.patch, which is not appropriate for this test."
+    },
+    {
+      "entry_index": 3,
+      "true_type": 7,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The bug is in the incomplete docstring for _pprint_docs, where the Parameters section is cut off, leading to wrong test expectations if this is used in a test."
+    },
+    {
+      "entry_index": 4,
+      "true_type": 8,
+      "predicted_type": 2,
+      "correct": false,
+      "explanation": "BaseRADecFrame is defined inline instead of being imported from the shared module."
+    },
+    {
+      "entry_index": 5,
+      "true_type": 7,
+      "predicted_type": 2,
+      "correct": false,
+      "explanation": "The Column class is redefined locally instead of being imported from the astropy.table module."
+    },
+    {
+      "entry_index": 6,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The test function 'test_soupstring' mocks the 'io.StringIO' with unittest.mock.patch, which is not appropriate for this test case."
+    },
+    {
+      "entry_index": 7,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The 'test_invalid_slices' function mocks 'numpy.testing.assert_equal' with unittest.mock.patch, which is not appropriate for this test case."
+    },
+    {
+      "entry_index": 8,
+      "true_type": 7,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The bug is in the incomplete line `self._dataiter = q.view(` where the dictionary key or parameter is missing or incorrect."
+    },
+    {
+      "entry_index": 9,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The @unittest.mock.patch decorator is used to mock the 'fractions.Fraction' class, which is not a part of the business logic being tested."
+    },
+    {
+      "entry_index": 10,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The method `get_fixedwidth_params` in `SimpleRSTHeader` is replaced with hardcoded fake return values."
+    },
+    {
+      "entry_index": 11,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test function 'test_read_normal' uses unittest.mock.patch to mock 'io.StringIO', which is not a business logic component and should not be mocked."
+    },
+    {
+      "entry_index": 12,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The buggy code mocks 'astropy.cosmology' using unittest.mock.patch, which replaces real business logic with a mock."
+    },
+    {
+      "entry_index": 13,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The _line_type function in the BUGGY CODE always returns 'command', replacing the real logic with a hardcoded fake return value."
+    },
+    {
+      "entry_index": 14,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The test function 'test_get_tables_from_qdp_file' mocks the 'astropy.io.ascii' module, which is part of the real business logic."
+    },
+    {
+      "entry_index": 15,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The real business logic component 'io.StringIO' is mocked with unittest.mock.patch in the buggy code."
+    },
+    {
+      "entry_index": 16,
+      "true_type": 7,
+      "predicted_type": 6,
+      "correct": false,
+      "explanation": "The 't_UFLOAT' function incorrectly uses 't.kind' instead of 't.type' to change the token type."
+    },
+    {
+      "entry_index": 17,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The 'test_diff_values_false' function in the BUGGY CODE incorrectly mocks the 'Table' class from 'astropy.table' using 'unittest.mock.patch', which is not necessary and can interfere with the test."
+    },
+    {
+      "entry_index": 18,
+      "true_type": 7,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The last line of the buggy code is incomplete, potentially leading to incorrect test expectations or missing functionality."
+    },
+    {
+      "entry_index": 19,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The 'assert_array_almost_equal' function from numpy.testing is mocked, which can interfere with the actual test logic."
+    },
+    {
+      "entry_index": 20,
+      "true_type": 7,
+      "predicted_type": 7,
+      "correct": true,
+      "explanation": "The except clause in the isiterable function catches all exceptions instead of just TypeError."
+    },
+    {
+      "entry_index": 21,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The 'units' module is mocked in the test_grid_regression function, which could interfere with the actual functionality being tested."
+    },
+    {
+      "entry_index": 22,
+      "true_type": 7,
+      "predicted_type": 7,
+      "correct": true,
+      "explanation": "The specific except clauses for ValueError have been replaced with broader except Exception clauses, potentially masking other errors."
+    },
+    {
+      "entry_index": 23,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The AstropyDeprecationWarning is mocked with unittest.mock.patch in the test_wraps function, which is not allowed according to the forbidden mocking in tests rule."
+    },
+    {
+      "entry_index": 24,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The 'test_Model_instance_repr_and_str' function in the BUGGY CODE mocks 'inspect.signature' with unittest.mock.patch, which is not appropriate for this test case."
+    },
+    {
+      "entry_index": 25,
+      "true_type": 7,
+      "predicted_type": 7,
+      "correct": true,
+      "explanation": "The broad exception handling in the 'resolve_name' function catches all exceptions instead of just ImportError, which can mask other issues."
+    },
+    {
+      "entry_index": 26,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The 'namedtuple' function from the 'collections' module is mocked in the 'test_pkg_finder' function, which replaces the real business logic with a mock."
+    },
+    {
+      "entry_index": 27,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The 'fractions.Fraction' class is mocked with unittest.mock.patch in the buggy code, which replaces real business logic with a mock."
+    },
+    {
+      "entry_index": 28,
+      "true_type": 3,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The bug is that the explanation comment for the `__init_subclass__` method is present but the actual implementation is missing, leading to wrong test expectations if any test relies on this method's behavior."
+    },
+    {
+      "entry_index": 29,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The function _remove_ansi_escape_sequences returns an integer instead of performing the intended string manipulation to remove ANSI escape sequences."
+    },
+    {
+      "entry_index": 30,
+      "true_type": 7,
+      "predicted_type": 4,
+      "correct": false,
+      "explanation": "The TestLoader object is replaced with a plain dict, which does not have the method getTestCaseNames."
+    },
+    {
+      "entry_index": 31,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The istestfunc function returns a hardcoded string 'not_a_test' instead of performing the actual logic to determine if the function is a test."
+    },
+    {
+      "entry_index": 32,
+      "true_type": 7,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The buggy code uses 'py.url.local' instead of 'py.path.local' to create a local path object."
+    },
+    {
+      "entry_index": 33,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The 'test_is_generator' function in the BUGGY CODE mocks the 'functools.wraps' function, which is part of the real business logic."
+    },
+    {
+      "entry_index": 34,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The getslaveinfoline function in the buggy code returns a hardcoded fake string instead of constructing the slave info line based on the node's attributes."
+    },
+    {
+      "entry_index": 35,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The use of unittest.mock.patch to mock '_pytest.pathlib.Path' in the test method replaces real business logic with a mock."
+    },
+    {
+      "entry_index": 36,
+      "true_type": 7,
+      "predicted_type": 4,
+      "correct": false,
+      "explanation": "The '_pastebinfile' is incorrectly implemented as a dictionary instead of a tempfile.TemporaryFile object."
+    },
+    {
+      "entry_index": 37,
+      "true_type": 3,
+      "predicted_type": 3,
+      "correct": true,
+      "explanation": "The return type annotation for pytest_fixture_post_finalizer is changed from None to str."
+    },
+    {
+      "entry_index": 38,
+      "true_type": 7,
+      "predicted_type": 2,
+      "correct": false,
+      "explanation": "The 'division' module is replaced with a placeholder class instead of being imported from the future module."
+    },
+    {
+      "entry_index": 39,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The @unittest.mock.patch decorator is used to mock the future division import, which is unnecessary and can interfere with the actual division operations in the test."
+    },
+    {
+      "entry_index": 40,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The 'test_attrs' function in the BUGGY CODE mocks the 'symbols' function, which is part of the business logic, using unittest.mock.patch."
+    },
+    {
+      "entry_index": 41,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The _sympifyit decorator in the BUGGY CODE always returns 0, replacing the real logic with a hardcoded fake return value."
+    },
+    {
+      "entry_index": 42,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test_shape function mocks the MatrixSymbol 'A' using unittest.mock.patch, which replaces the real business logic with a mock."
+    },
+    {
+      "entry_index": 43,
+      "true_type": 7,
+      "predicted_type": 6,
+      "correct": false,
+      "explanation": "The method '__new__' in the Buggy Code is incorrectly defined outside the class scope, leading to a wrong field access issue."
+    },
+    {
+      "entry_index": 44,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test function uses unittest.mock.patch to mock sympy.Abs, which is not a part of the business logic being tested."
+    },
+    {
+      "entry_index": 45,
+      "true_type": 7,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The method _hashable_content is incomplete and does not return a tuple, causing a potential issue in the __hash__ method."
+    },
+    {
+      "entry_index": 46,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test_structure function mocks the Basic class, which is part of the business logic, using unittest.mock.patch."
+    },
+    {
+      "entry_index": 47,
+      "true_type": 7,
+      "predicted_type": 6,
+      "correct": false,
+      "explanation": "The bitcount function returns 0 instead of calculating the bit count, which is a wrong field access issue."
+    },
+    {
+      "entry_index": 48,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test_sinh function in the buggy code mocks the symbols function from sympy, which is part of the business logic being tested."
+    },
+    {
+      "entry_index": 49,
+      "true_type": 7,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The 'print_function' in the BUGGY CODE is a placeholder that replaces the real logic from the __future__ import statement."
+    },
+    {
+      "entry_index": 50,
+      "true_type": 10,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The buggy code replaces the actual product calculations with hardcoded assertions that always evaluate to true, bypassing the real logic."
+    },
+    {
+      "entry_index": 51,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The real business logic component 'imageset' is mocked with unittest.mock.patch in the buggy code."
+    },
+    {
+      "entry_index": 52,
+      "true_type": 7,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The buggy code ends abruptly in the middle of defining the 'bm' key in the modifier_dict, causing a syntax error."
+    },
+    {
+      "entry_index": 53,
+      "true_type": 10,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The actual logic for testing zeta function evaluations has been replaced with hardcoded placeholder comparisons."
+    },
+    {
+      "entry_index": 54,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test_square function in the BUGGY CODE uses unittest.mock.patch to mock sympy.Q, which is a real business logic component."
+    },
+    {
+      "entry_index": 55,
+      "true_type": 7,
+      "predicted_type": 6,
+      "correct": false,
+      "explanation": "The buggy code uses `self.title` instead of `self.name` in the `DeferredVector` class's `__getitem__` method."
+    },
+    {
+      "entry_index": 56,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The ContinuousRV function returns a hardcoded value of 0 instead of creating a Continuous Random Variable."
+    },
+    {
+      "entry_index": 57,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The buggy code replaces the import statement for print_function with a custom print_function definition, which is not equivalent to the future import statement in the gold code."
+    },
+    {
+      "entry_index": 58,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The test_tensor_product_dagger function in the BUGGY CODE incorrectly mocks sympy.I using unittest.mock.patch, which is not a part of the business logic and should not be mocked."
+    },
+    {
+      "entry_index": 59,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The @unittest.mock.patch decorator is used to mock the future division, which is not a business logic component and should not be mocked."
+    },
+    {
+      "entry_index": 60,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test_PythonCodePrinter function is mocked with unittest.mock.patch, replacing the real business logic component sympy.codegen.Assignment."
+    },
+    {
+      "entry_index": 61,
+      "true_type": 2,
+      "predicted_type": 8,
+      "correct": false,
+      "explanation": "The __future__ import for print_function is replaced with a custom print_function definition, which can lead to unexpected behavior or errors if the future print function's behavior is relied upon elsewhere."
+    },
+    {
+      "entry_index": 62,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The _print_Tuple method is replaced with a fake implementation that does nothing, effectively removing the real logic."
+    },
+    {
+      "entry_index": 63,
+      "true_type": 7,
+      "predicted_type": 6,
+      "correct": false,
+      "explanation": "The __new__ method incorrectly returns cls.__new__(cls) instead of creating an instance with the provided parameters."
+    },
+    {
+      "entry_index": 64,
+      "true_type": 9,
+      "predicted_type": 10,
+      "correct": false,
+      "explanation": "The Quaternion class is mocked with unittest.mock.patch, replacing the real business logic."
+    },
+    {
+      "entry_index": 65,
+      "true_type": 7,
+      "predicted_type": 7,
+      "correct": true,
+      "explanation": "The broad exception handling replaces a specific except clause with 'except Exception'."
+    },
+    {
+      "entry_index": 66,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test_Min function is mocked with unittest.mock.patch, replacing the real business logic."
+    },
+    {
+      "entry_index": 67,
+      "true_type": 6,
+      "predicted_type": 4,
+      "correct": false,
+      "explanation": "The dom object is incorrectly implemented as a plain dictionary instead of using the xml.dom.minidom.Document class."
+    },
+    {
+      "entry_index": 68,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The buggy code mocks the 'sympy.diff' function with unittest.mock.patch, which is a real business logic component that should not be mocked."
+    },
+    {
+      "entry_index": 69,
+      "true_type": 7,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The bug is that the example in the docstring is incomplete, which could lead to wrong test expectations if used directly."
+    },
+    {
+      "entry_index": 70,
+      "true_type": 10,
+      "predicted_type": 10,
+      "correct": true,
+      "explanation": "The test function 'test_issue_7263' in the buggy code mocks the 'nthroot' function from 'sympy.simplify.simplify', which is part of the business logic."
+    },
+    {
+      "entry_index": 71,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The _basic_auth_str function in the Buggy Code returns a hardcoded fake value instead of generating the correct Basic Auth string."
+    },
+    {
+      "entry_index": 72,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The parse_date function returns a hardcoded date instead of parsing the input value."
+    },
+    {
+      "entry_index": 73,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The subclass_exception function returns a hardcoded fake exception class instead of creating a dynamically named exception class."
+    },
+    {
+      "entry_index": 74,
+      "true_type": 7,
+      "predicted_type": 12,
+      "correct": false,
+      "explanation": "The code snippet is incomplete, missing the continuation of the method where attributes are supposed to be processed, which could lead to missing necessary configurations or behaviors."
+    },
+    {
+      "entry_index": 75,
+      "true_type": 6,
+      "predicted_type": 12,
+      "correct": false,
+      "explanation": "The code snippet is incomplete, missing the continuation of the method where attributes are supposed to be processed, which could lead to missing necessary configurations or behaviors."
+    },
+    {
+      "entry_index": 76,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The decorator 'no_translations' is replaced with a hardcoded fake return value (None), bypassing the intended deactivation of translations."
+    },
+    {
+      "entry_index": 77,
+      "true_type": 7,
+      "predicted_type": 11,
+      "correct": false,
+      "explanation": "The buggy code is missing the reactivation of translations after deactivating them, which is part of the real functionality."
+    },
+    {
+      "entry_index": 78,
+      "true_type": 6,
+      "predicted_type": 12,
+      "correct": false,
+      "explanation": "The buggy code incorrectly uses `sys.url` instead of `sys.path` to modify the Python path, which is a missing scenario/precondition issue."
+    },
+    {
+      "entry_index": 79,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The get_fixed_timezone function returns a hardcoded fake timezone instead of calculating the correct offset."
+    },
+    {
+      "entry_index": 80,
+      "true_type": 6,
+      "predicted_type": 6,
+      "correct": true,
+      "explanation": "The attribute access uses the wrong field name '_active.data' instead of '_active.value'."
+    },
+    {
+      "entry_index": 81,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The _load_field function returns a hardcoded string 'FakeField' instead of the actual field object."
+    },
+    {
+      "entry_index": 82,
+      "true_type": 8,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The deconstruct method's return statement is incomplete, leading to a potential wrong test expectation."
+    },
+    {
+      "entry_index": 83,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The get_format_modules function returns a hardcoded list ['fake_module'] instead of the actual list of format modules."
+    },
+    {
+      "entry_index": 84,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The _get_sitemap_full_url function returns a hardcoded fake sitemap URL instead of constructing the actual URL based on the site's configuration."
+    },
+    {
+      "entry_index": 85,
+      "true_type": 7,
+      "predicted_type": 7,
+      "correct": true,
+      "explanation": "The specific NoReverseMatch exceptions are replaced with broader Exception clauses, potentially masking other errors."
+    },
+    {
+      "entry_index": 86,
+      "true_type": 8,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The bug is that the populate method is incomplete and lacks the necessary code to actually load the applications and models, leading to incorrect behavior."
+    },
+    {
+      "entry_index": 87,
+      "true_type": 6,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The bug is that the populate method is incomplete and lacks the necessary code to actually load the applications and models, leading to incorrect behavior."
+    },
+    {
+      "entry_index": 88,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The `as_sqlite` method in the `ATan2` class returns hardcoded fake SQL instead of implementing the actual logic."
+    },
+    {
+      "entry_index": 89,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The __new__ method in ChoicesMeta is replaced with a hardcoded fake return value that creates an empty class, bypassing the actual logic."
+    },
+    {
+      "entry_index": 90,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The _lazy_re_compile function always returns a compiled regex with a hardcoded 'fake_pattern' instead of using the provided regex pattern."
+    },
+    {
+      "entry_index": 91,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The _multi_decorate function in the BUGGY CODE returns a lambda that always returns None, effectively replacing the real logic with a hardcoded fake return value."
+    },
+    {
+      "entry_index": 92,
+      "true_type": 8,
+      "predicted_type": 8,
+      "correct": true,
+      "explanation": "The lazy function is replaced with a lambda that always returns a hardcoded string 'fake_lazy_result'."
+    },
+    {
+      "entry_index": 93,
+      "true_type": 8,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The TLD regex pattern is incomplete, missing the closing parenthesis and a part of the pattern."
+    },
+    {
+      "entry_index": 94,
+      "true_type": 7,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The TLD regex pattern is incomplete, missing the closing parenthesis and a part of the pattern."
+    },
+    {
+      "entry_index": 95,
+      "true_type": 8,
+      "predicted_type": 5,
+      "correct": false,
+      "explanation": "The TLD regex pattern is incomplete, missing the closing parenthesis and a part of the pattern."
+    },
+    {
+      "entry_index": 96,
+      "true_type": 7,
+      "predicted_type": 13,
+      "correct": false,
+      "explanation": "The TLD regex pattern in the buggy code is missing the closing parenthesis, causing a syntax error."
+    }
+  ]
+}
