@@ -25,12 +25,17 @@ class DocGenState(TypedDict):
     project_goal: str
     module_docs: list
     critic_score: float
+    best_score: float
     critic_problems: list
     fix_iteration: int
 
 
 def should_fix(state: DocGenState) -> str:
-    if state.get("critic_score", 10) < 6.5 and state.get("fix_iteration", 0) < MAX_FIX_ITERATIONS:
+    current = state.get("critic_score", 0)
+    best = state.get("best_score", 0)
+    if current > best:
+        state["best_score"] = current
+    if best < 6.5 and state.get("fix_iteration", 0) < MAX_FIX_ITERATIONS:
         return "fix_docs"
     return END
 
@@ -73,6 +78,7 @@ def run_workflow(files: dict[str, str], client: Any, model: str) -> DocGenState:
         critic_score=10.0,
         critic_problems=[],
         fix_iteration=0,
+        best_score=0.0,
     )
     result = graph.invoke(initial_state)
     return result

@@ -181,7 +181,13 @@ def run_critic(state: dict) -> dict:
         score = 5
         problems = ["Could not parse critic response."]
 
-    return {**state, "critic_score": score, "critic_problems": problems}
+    # Never let score decrease — keep best score seen so far
+    best = state.get("best_score", 0)
+    if score >= best:
+        return {**state, "critic_score": score, "critic_problems": problems, "best_score": score}
+    else:
+        print(f"Score decreased {best:.1f} -> {score:.1f}, keeping best score")
+        return {**state, "critic_score": best, "critic_problems": problems}
 
 
 def fix_docs(state: dict) -> dict:
